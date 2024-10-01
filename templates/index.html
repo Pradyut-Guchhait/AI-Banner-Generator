@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Promotional Banner Generator</title>
+    <style>
+        /* styles.css */
+
+/* Basic styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #b1d4c6
+    ;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Header */
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+}
+
+/* Form section */
+div {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+label {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #34495e;
+}
+
+input[type="file"],
+input[type="text"] {
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 15px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 1.2em;
+    color: #fff;
+    background-color: #3498db;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+/* Image preview section */
+#preview,
+#generatedBanner {
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    margin-top: 15px;
+    max-width: 100%;
+    height: auto;
+}
+
+/* Generated banner section */
+#output {
+    margin-top: 30px;
+    text-align: center;
+}
+
+h2 {
+    color: #2c3e50;
+}
+
+    </style>
+</head>
+<body>
+    <h1>AI-Powered Promotional Banner Generator</h1>
+
+    <!-- Upload Image Section -->
+    <div>
+        <label for="productImage">Upload Product Image:</label>
+        <input type="file" id="productImage" accept="image/*" onchange="previewImage(event)">
+    </div>
+
+    <!-- Image Preview Section -->
+    <div>
+        <h2>Image Preview:</h2>
+        <img id="preview" src="#" alt="Image Preview" style="display:none; width:300px;"/>
+    </div>
+
+    <!-- Event and Promotion Inputs -->
+    <div>
+        <label for="event">Event/Theme:</label>
+        <input type="text" id="event" placeholder="e.g., Black Friday, Diwali">
+        
+        <label for="promo">Promotional Offer:</label>
+        <input type="text" id="promo" placeholder="e.g., 50% off, Buy 1 Get 1 Free">
+    </div>
+
+    <!-- Submit Button -->
+    <div>
+        <button onclick="submitForm()">Generate Banner</button>
+    </div>
+
+    <!-- Output Section -->
+    <div id="output">
+        <h2>Generated Banner:</h2>
+        <img id="generatedBanner" src="#" alt="Generated Banner" style="display:none; width:300px;"/>
+    </div>
+
+    <script>
+        // Preview image on upload
+        function previewImage(event) {
+            const preview = document.getElementById('preview');
+            const file = event.target.files[0];
+
+            const reader = new FileReader();
+            reader.onload = function() {
+                preview.src = reader.result;
+                preview.style.display = 'block';
+            }
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Submit form data to the backend
+        function submitForm() {
+            const imageInput = document.getElementById('productImage').files[0];
+            const eventInput = document.getElementById('event').value;
+            const promoInput = document.getElementById('promo').value;
+
+            if (!imageInput || !eventInput || !promoInput) {
+                alert('Please fill all fields and upload an image.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', imageInput);
+            formData.append('event', eventInput);
+            formData.append('promo', promoInput);
+
+            // Make a POST request to the backend API
+            fetch('/generate', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const banner = document.getElementById('generatedBanner');
+                banner.src = data.bannerUrl;
+                banner.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
